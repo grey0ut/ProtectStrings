@@ -41,7 +41,11 @@ $MasterPassword = Read-Host -AsSecureString
   
 ```powershell
 Set-MasterPassword -MasterPassword $MasterPassword  
+```  
+
+### Encrypt/Decrypt A String  
   
+```powershell
 # encrypt a string using AES encryption  
 Protect-String -InputString "my secret message" -Encryption AES  
 ```  
@@ -49,7 +53,7 @@ Protect-String -InputString "my secret message" -Encryption AES
 ```  
 eyJFbmNyeXB0aW9uIjoiQUVTIiwiQ2lwaGVyVGV4dCI6IlhuVmVSTTNMS3A3MU80bTkwdEREV1pvdmRkRTZ5TWl5WnFNNGM5bHgyWWxMdWc1Z3JmR3p0elB6ZzVhMG1YMWMiLCJEUEFQSUlkZW50aXR5IjoiIn0=  
 ```  
-### Encrypt/Decrypt A String
+    
 ```powershell
 # encrypt a string using the built-in DPAPI encryption  
 Protect-String -InputString "my secret message"  
