@@ -95,13 +95,13 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @('string','encryption','dpapi','aes','PSEdition_Desktop','Windows')
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/grey0ut/ProtectStrings/blob/main/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/grey0ut/ProtectStrings'
 
         # A URL to an icon representing this module.
         # IconUri = ''
