@@ -46,7 +46,7 @@ Function Set-AESKeyConfig {
             $DefaultConfigData = @"
 @{
     Salt = '|½ÁôøwÚ♀å>~I©k◄=ýñíî'
-    Iterations = 1000
+    Iterations = 310000
     Hash = 'SHA256'
 }
 "@
