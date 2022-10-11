@@ -12,7 +12,7 @@
 RootModule = 'ProtectStrings.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.23.6'
+ModuleVersion = '1.23.8'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -69,7 +69,9 @@ PowerShellVersion = '5.0'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @()
+FunctionsToExport = 'Export-MasterPassword', 'Get-MasterPassword', 
+               'Import-MasterPassword', 'Protect-String', 'Remove-MasterPassword', 
+               'Set-AESKeyConfig', 'Set-MasterPassword', 'Unprotect-String'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
