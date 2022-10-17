@@ -25,60 +25,41 @@ Get-Command -Module ProtectStrings
   
 ### Setting Master Password  
 ```powershell  
-Set-MasterPassword
-```  
-```  
+PS> Set-MasterPassword
 Enter Master Password: ****************  
 ```  
   
 ```powershell
 # or provide a SecureString object  
-$MasterPassword = Read-Host -AsSecureString  
-```  
-```  
+PS> $MasterPassword = Read-Host -AsSecureString  
 ****************  
-```  
-  
-```powershell
-Set-MasterPassword -MasterPassword $MasterPassword  
+PS> Set-MasterPassword -MasterPassword $MasterPassword  
 ```  
 
 ### Encrypt/Decrypt A String  
   
 ```powershell
 # encrypt a string using AES encryption  
-Protect-String -InputString "my secret message" -Encryption AES  
-```  
-  
-```  
+PS> Protect-String -InputString "my secret message" -Encryption AES  
 eyJFbmNyeXB0aW9uIjoiQUVTIiwiQ2lwaGVyVGV4dCI6IlhuVmVSTTNMS3A3MU80bTkwdEREV1pvdmRkRTZ5TWl5WnFNNGM5bHgyWWxMdWc1Z3JmR3p0elB6ZzVhMG1YMWMiLCJEUEFQSUlkZW50aXR5IjoiIn0=  
 ```  
     
 ```powershell
 # encrypt a string using the built-in DPAPI encryption  
-Protect-String -InputString "my secret message"  
-```  
-  
-```  
+PS> Protect-String -InputString "my secret message"   
 eyJFbmNyeXB0aW9uIjoiRFBBUEkiLCJDaXBoZXJUZXh0IjoiMDEwMDAwMDBkMDhjOWRkZjAxMTVkMTExOGM3YTAwYzA0ZmMyOTdlYjAxMDAwMDAwNzNhN2VmN2U2ODMzOTg0ZTg3Nzg2NTA0ZjlhMjFjMTkwMDAwMDAwMDAyMDAwMDAwMDAwMDEwNjYwMDAwMDAwMTAwMDAyMDAwMDAwMGI0NDlhYmJlZGI1ZWY3NzkwNGU4NWYxNGIyNGM1ZmNiYmFmMmVhYmJhNGY3MjAzYzg2YTNiOGM0MDY0N2Q2NzMwMDAwMDAwMDBlODAwMDAwMDAwMjAwMDAyMDAwMDAwMDBlYjNiNTBmZTVkZGEyNWNiNzdjZmQzOTlmYTVjNGZkOTBmNGMxMjgxOTRiYjEwMjYwZDRmZjk3MGMwZjZmYWEzMDAwMDAwMGE4NDlmY2QzZTVmMjFlZTQxMzE5Yjc2ZDk1MzM4N2E2YjUyM2U1YWFiNmQ5MmE0YTlmMTU3MjNhYmYwZWMwN2YzMGJjMWFkZjEyNWRjNDA2MmRmNTIxYzQwMTY5ZjVmMzQwMDAwMDAwOWM0ODRmMWIxMzE1MjkxY2Y0ZDU1Y2U1MTdmNWZmMWQ0MDQyZmI0MDRjZjBiNGM4M2ZhNWY3MjIwZGJiYjI3ODEwYWRkMmNmNjJhNDg3ZGQ5MjBmMGE4YWUxMTY3ZTVjMzAzZjEyMWM3ZjgyY2RlNzdmZTRmOTMyMDc5MTI0OTciLCJEUEFQSUlkZW50aXR5IjoiR1JJU0xPQk9cXENvdXJ0bmV5IEJvZGV0dCJ9  
 ```  
   
 ```powershell  
 # Protect-String and Unprotect-String both accept pipe-line input  
-"Secret message" | Protect-String -Encryption AES  
-```  
-  
-```
+PS> "Secret message" | Protect-String -Encryption AES  
 eyJFbmNyeXB0aW9uIjoiQUVTIiwiQ2lwaGVyVGV4dCI6IlhDdnZwcUoxdm90OU9UQ0RFTkxRWkFPSk1zSDFFcjJJTXFiemdWaUpBU1U9IiwiRFBBUElJZGVudGl0eSI6IiJ9  
 ```  
 
 ```powershell
 # Or the same example, but capture the output in a variable to decrypt later  
-$encryptedtext = "Secret message" | Protect-String -Encryption AES  
-$encryptedtext | Unprotect-String  
-```  
-  
-```  
+PS> $encryptedtext = "Secret message" | Protect-String -Encryption AES  
+PS> $encryptedtext | Unprotect-String    
 Secret message  
 ```  
   
@@ -87,15 +68,14 @@ When protecting a string, Protect-String will choose DPAPI by default.  If you p
 The output will be Base64 encoded cipher text either way.  Unprotect-String will automatically identify whether the cipher text was produced by AES or DPAPI and try to decrypt appropriately.  
 ### Master Password/AES Key
   
-The Master Password is used with PBKDF2 to generate a high-entropy 256-bit unique key for use with AES.  The key is stored as a SecureString object within the current session for repeated use.  If at any point you wish to clear it you can use the Remote-MasterPassword function to do so, or exit the session.  
+The Master Password is used with PBKDF2 to generate a high-entropy 256-bit unique key for use with AES.  The key is stored as a SecureString object within the current session for repeated use.  If at any point you wish to clear it you can use the Remove-MasterPassword function to do so, or exit the session.  
   
 If you'd rather export the stored key to import later, rather than remembering the Master Password, you can use the Export-MasterPassword/Import-MasterPasword functions.  This might be helpful if you used some random password generator to create the Master Password to begin with.  
   
 The settings for the PBKDF2 have hard coded defaults, you can view them by running this command:  
 ```powershell  
-Set-AESKeyConfig -Verbose  
+PS> Set-AESKeyConfig -Verbose  
 ```  
-  
 ```  
 VERBOSE: Config file path: C:\Users\Courtney Bodett\AppData\Local\ProtectStringsConfig.psd1
 VERBOSE: 
