@@ -44,8 +44,7 @@ Function Import-MasterPassword {
 
     Process {
         If ($EncodedKey) {
-            $AESKey = [System.Convert]::FromBase64String($EncodedKey)
-            $ClearTextAESKey = ConvertFrom-Bytes -InputBytes $AESKey -Encoding Unicode
+            $ClearTextAESKey = ConvertFrom-Base64 -TextString $EncodedKey
             Write-Verbose "Storing AES Key to current session"
             $SecureAESKey = ConvertTo-SecureString -String $ClearTextAESKey -AsPlainText -Force
             Set-AESMPVariable -MPKey $SecureAESKey

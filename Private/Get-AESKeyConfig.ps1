@@ -2,10 +2,10 @@
 .Synopsis
 Function to retrieve settings for use with PBKDF2 to create an AES Key
 .NOTES
-Version:        1.0
+Version:        2.0
 Author:         C. Bodett
-Creation Date:  06/09/2022
-Purpose/Change: initial function development
+Creation Date:  11/03/2022
+Purpose/Change: Changed Salt storage method to Base64 encoding for more reliable operation
 #>
 Function Get-AESKeyConfig {
     [cmdletbinding()]
@@ -20,8 +20,8 @@ Function Get-AESKeyConfig {
         if (-not (Test-Path  $ConfigFilePath)) {
             $DefaultConfigData = @"
 @{
-    Salt = '|½ÁôøwÚ♀å>~I©k◄=ýñíî'
-    Iterations = 1000
+    Salt = 'fMK9w4HDtMO4d8Oa4pmAw6U+fknCqWvil4Q9w73DscOtw64='
+    Iterations = 310000
     Hash = 'SHA256'
 }
 "@

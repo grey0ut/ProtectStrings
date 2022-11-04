@@ -5,7 +5,9 @@ Function Set-AESKeyConfig {
     .Description
     Allows custom configuration of the parameters associated with the PBKDF2 generation. Namely the Salt, number of Iterations, and Hash type.
     .Parameter Salt
-    Provide a custom string to be used as the Salt bytes in PBKDF2 generation. Must be at least 8 characters in length.
+    Provide a custom string to be used as the Salt bytes in PBKDF2 generation. Must be at least 8 bytes in length. Alternatively you can also provide a base64 encoded string.
+    .Parameter SaltBytes
+    A byte array of at least 8 bytes can be provided  for a custom salt value.
     .Parameter Iterations
     Specify the number of iterations PBKDF2 should use. 1000 is the default.
     .Parameter Hash
@@ -13,22 +15,24 @@ Function Set-AESKeyConfig {
     .Parameter Defaults
     Switch parameter that resets the AES Key Config file to default values.
     .NOTES
-    Version:        1.0
+    Version:        2.0
     Author:         C. Bodett
-    Creation Date:  06/09/2022
-    Purpose/Change: initial function development
+    Creation Date:  11/03/2022
+    Purpose/Change: Changed Salt storage method to Base64 encoding for more reliable operation
     #>
-    [cmdletbinding()]
+    [cmdletbinding(DefaultParameterSetName = 'none')]
     Param (
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $false, ParameterSetName = "SaltString")]
         [ValidateScript({
-            if ($_.Length -lt 8) {
+            if ([System.Text.Encoding]::UTF8.GetBytes($_).Count -lt 8) {
                 Throw "Salt must be at least 8 bytes in length"
             } else {
                 return $true
             }
         })]
         [String]$Salt,
+        [Parameter(Mandatory = $false, ParameterSetName = "SaltBytes")]
+        [Byte[]]$SaltBytes,
         [Parameter(Mandatory = $false)]
         [Int32]$Iterations,
         [Parameter(Mandatory = $false)]
@@ -45,7 +49,7 @@ Function Set-AESKeyConfig {
             Write-verbose "Defaults parameter provided or no config file present. Creating defaults"
             $DefaultConfigData = @"
 @{
-    Salt = '|½ÁôøwÚ♀å>~I©k◄=ýñíî'
+    Salt = 'fMK9w4HDtMO4d8Oa4pmAw6U+fknCqWvil4Q9w73DscOtw64='
     Iterations = 310000
     Hash = 'SHA256'
 }
@@ -54,6 +58,29 @@ Function Set-AESKeyConfig {
                 $DefaultConfigData | Out-File -FilePath $ConfigFilePath -ErrorAction Stop
             } Catch {
                 Throw $_
+            }
+        }
+
+        Switch ($PSBoundParameters.Keys) {
+            'Salt' {
+                try { 
+                    $Null = [System.Convert]::FromBase64String($Salt)
+                } catch {
+                    # suppress errors
+                }
+                if (-not ($?)) {
+                    try {
+                        $Salt = ConvertTo-Base64 -TextString $Salt
+                    } catch {
+                        Throw $_
+                    }
+                }
+            }
+            'SaltBytes' {
+                if ($SaltBytes.Count -lt 8) {
+                    Throw "Salt must be at least 8 bytes. Provided byte array is only $($SaltBytes.Count) bytes"
+                }
+                $Salt = ConvertTo-Base64 -Bytes $SaltBytes
             }
         }
 
