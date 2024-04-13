@@ -47,7 +47,6 @@ Function Export-MasterPassword {
             Write-Verbose "Converting to Base64 before export"
             $EncodedKey = ConvertTo-Base64 -TextString $ClearTextAESKey
             Write-Verbose "Saving to $Filepath with Encoded key:"
-            Write-Debug "$EncodedKey"
             Out-File -FilePath $FilePath -InputObject $EncodedKey -Force
         } else {
             Write-Warning "No key found to export"

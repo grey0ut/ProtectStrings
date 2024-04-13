@@ -35,5 +35,5 @@ Function ConvertTo-CipherObject {
         throw
     }
     $CipherObject.DPAPIIdentity = $ObjectData.DPAPIIdentity
-    return $CipherObject
+    $CipherObject
 }

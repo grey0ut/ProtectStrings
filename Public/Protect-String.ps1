@@ -8,7 +8,7 @@ Function Protect-String {
     .Parameter InputString
     This is the string text you wish to protect with encryption. Can  be provided via the pipeline.
     .Parameter Encryption
-    Specify either DPAPI or AES encryption. DPAPI is the default if not specified.
+    Specify either DPAPI or AES encryption. AES is the default if not specified. DPAPI is not recommended on non-Windows systems are there is no encryption for SecureStrings.
     .EXAMPLE
     PS C:\> Protect-String "Secret message"
     eyJFbmNyeXB0aW9uIjoiRFBBUEkiLCJDaXBoZXJUZXh0IjoiMDEwMDAwMDBkMDhjOWRkZjAxMTVkMTExOGM3YTAwYzA0ZmMyOTdlYjAxMDAwMDAwODRkMTVhY2QwZjk5ZDM0NDllNzE5MTkwZGI0YzY2ZWUwMDAwMDAwMDAyMDAwMDAwMDAwMDAzNjYwMDAwYzAwMDAwMDAxMDAwMDAwMGMyNjFhZTY5YThjZjdlMTI0ZTJmZWI3MmVmMTk3YmRlMDAwMDAwMDAwNDgwMDAwMGEwMDAwMDAwMTAwMDAwMDA4NjUxZWJjZWY4MTE4MzEzMzljNDMyNjA5OWUxZWY3ZDIwMDAwMDAwZGQ3MDUyNGFkZGZlMmM5YzQyMDlhZDc2NjYzZTlhMzgxMTBjNDJkMjk3ZDNhOGQ2OGY4MGI1NDU0YTIxNTUyZjE0MDAwMDAwZThmYjFmY2YyMzYyM2U4NjRmMDliMzA1ZmI4ZTM1ZWRkMjBmNzU2NCIsIkRQQVBJSWRlbnRpdHkiOiJMTklQQzIwMzQ3NExcXEJvZGV0dEMifQ==
@@ -21,14 +21,10 @@ Function Protect-String {
 
     This command will encrypt the provided string with AES 256-bit encryption. If no Master Password is found in the current session (set with Set-MasterPassword) then it will prompt for one  to be set.
     .NOTES
-    Version:        1.0
+    Version:        1.2
     Author:         C. Bodett
-    Creation Date:  3/28/2022
-    Purpose/Change: Initial function development
-    Version:        1.1
-    Author:         C. Bodett
-    Creation Date:  5/12/2022
-    Purpose/Change: changed to Generic List from ArrayList
+    Creation Date:  4/12/2024
+    Purpose/Change: Updated for cross platform use
     #>
     [cmdletbinding()]
     Param (
@@ -36,7 +32,7 @@ Function Protect-String {
         [String]$InputString,
         [Parameter(Mandatory = $false, Position = 1)]
         [ValidateSet("DPAPI","AES")]
-        [String]$Encryption = "DPAPI"
+        [String]$Encryption = "AES"
     )
     
     Begin {
@@ -45,10 +41,14 @@ Function Protect-String {
             Write-Verbose "Retrieving Master Password key"
             $SecureAESKey = Get-AESMPVariable
             $ClearTextAESKey = ConvertFrom-SecureStringToPlainText $SecureAESKey
-            #$AESKey = ConvertTo-Bytes -InputString $ClearTextAESKey -Encoding Unicode
             $AESKey = Convert-HexStringToByteArray -HexString $ClearTextAESKey
         }
-        $OutputString = [System.Collections.Generic.List[String]]::New()
+        If (Test-Path Variable:IsWindows) {
+            # we know we're not running on Windows since $IsWindows was introduced in v6
+            If (-not($IsWindows) -and ($Encryption.ToUpper() -eq "DPAPI")) {
+                throw "Cannot use DPAPI encryption on non-Windows host. Please use AES instead."
+            }
+        }
     }
 
     Process {
@@ -59,13 +59,13 @@ Function Protect-String {
                     $ConvertedString = ConvertTo-SecureString $InputString -AsPlainText -Force | ConvertFrom-SecureString
                     $CipherObject = New-CipherObject -Encryption "DPAPI" -CipherText $ConvertedString
                     $CipherObject.DPAPIIdentity = Get-DPAPIIdentity
-                    Write-Debug "DPAPI Identity: $($CipherObject.DPAPIIdentity)"
+                    Write-Verbose "DPAPI Identity: $($CipherObject.DPAPIIdentity)"
                     $JSONObject = ConvertTo-Json -InputObject $CipherObject -Compress
                     $JSONBytes = ConvertTo-Bytes -InputString $JSONObject -Encoding UTF8
                     $EncodedOutput = [System.Convert]::ToBase64String($JSONBytes)
-                    $OutputString.add($EncodedOutput)
+                    $EncodedOutput
                 } Catch {
-                    Write-Error $_
+                    Write-Error $Error[0]
                 }
             }
             "AES" {
@@ -76,16 +76,11 @@ Function Protect-String {
                     $JSONObject = ConvertTo-Json -InputObject $CipherObject -Compress
                     $JSONBytes = ConvertTo-Bytes -InputString $JSONObject -Encoding UTF8
                     $EncodedOutput = [System.Convert]::ToBase64String($JSONBytes)
-                    $OutputString.add($EncodedOutput)
+                    $EncodedOutput
                 } Catch {
-                    Write-Error $_
+                    Write-Error $Error[0]
                 }
             }
         }
-    }
-
-    End {
-        Write-Verbose "Protection complete. Returning $($OutputString.count) objects"
-        Return $OutputString
     }
 }

@@ -21,13 +21,12 @@ Function ConvertFrom-AESCipherText {
             Write-Verbose "Decrypting AES cipher text"
             $Decryptor = $AESCipher.CreateDecryptor()
             $UnencryptedBytes = $Decryptor.TransformFinalBlock($EncryptedBytes, 16, $EncryptedBytes.Length - 16)
-            Write-Verbose "Converting from bytes to string text using UTF8 encoding"
             $ConvertedString = ConvertFrom-Bytes -InputBytes $UnencryptedBytes -Encoding UTF8
+            $ConvertedString
         }
         End {
             Write-Verbose "Disposing of AES Cipher object"
             $AESCipher.Dispose()
-            return $ConvertedString
         }
 
 }

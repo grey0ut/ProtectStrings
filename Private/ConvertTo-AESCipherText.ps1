@@ -32,7 +32,7 @@ Function ConvertTo-AESCipherText {
 
     End {
         $AESCipher.Dispose()
-        return $ConvertedString
+        $ConvertedString
         }
 
 }

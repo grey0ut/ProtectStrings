@@ -33,5 +33,5 @@ Function ConvertFrom-Base64 {
     } else {
         $Decoded = [System.Convert]::FromBase64String($TextString)
     }
-    return $Decoded
+    $Decoded
 }

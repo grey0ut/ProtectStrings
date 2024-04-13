@@ -32,18 +32,10 @@ Function UnProtect-String {
 
     Clearing the master password from the sessino, providing the previously protected text to Unprotect-String will prompt for a master password and then decrypt the text and return the original string text.
     .NOTES
-    Version:        1.0
+    Version:        1.3
     Author:         C. Bodett
-    Creation Date:  3/28/2022
-    Purpose/Change: Initial function development
-    Version:        1.1
-    Author:         C. Bodett
-    Creation Date:  5/12/2022
-    Purpose/Change: Fixed processing to handle pipeline input. Changed from Arraylist to Generic list
-    Version:        1.2
-    Author:         C. Bodett
-    Creation Date:  6/7/2022
-    Purpose/Change: Redid Process block to accomodate new ConvertTo-CipherBlock function for better error handling on input text
+    Creation Date:  4/12/2024
+    Purpose/Change: formatting changes
     #>
     [cmdletbinding()]
     Param (
@@ -51,16 +43,11 @@ Function UnProtect-String {
         [String]$InputString
     )
     
-    Begin {
-        $OutputString = [System.Collections.Generic.List[String]]::New()
-    }
-
     Process {
         Write-Verbose "Converting supplied text to a Cipher Object for ProtectStrings"
         $CipherObject = Try {
             ConvertTo-CipherObject $InputString -ErrorAction Stop
         } Catch {
-            Write-Debug $_
             Write-Warning "Supplied text could not be converted to a Cipher Object. Verify that it was produced by Protect-String."
             return
         }
@@ -68,7 +55,6 @@ Function UnProtect-String {
         If ($CipherObject.Encryption -eq "AES") {
             $SecureAESKey = Get-AESMPVariable
             $ClearTextAESKey = ConvertFrom-SecureStringToPlainText $SecureAESKey
-            #$AESKey = ConvertTo-Bytes -InputString $ClearTextAESKey -Encoding Unicode
             $AESKey = Convert-HexStringToByteArray -HexString $ClearTextAESKey
         }
         Switch ($CipherObject.Encryption) {
@@ -78,7 +64,7 @@ Function UnProtect-String {
                     $SecureStringObj = ConvertTo-SecureString -String $CipherObject.CipherText -ErrorAction Stop
                     $ConvertedString = ConvertFrom-SecureStringToPlainText -StringObj $SecureStringObj -ErrorAction Stop
                     $CorrectPassword = $true
-                    $OutputString.add($ConvertedString)
+                    $ConvertedString
                 } Catch {
                     Write-Warning "Unable to decrypt as this user on this machine"
                     Write-Verbose "String protected by Identity: $($CipherObject.DPAPIIdentity)"
@@ -90,21 +76,14 @@ Function UnProtect-String {
                     Write-Verbose "Attempting to decrypt AES cipher text"
                     $ConvertedString = ConvertFrom-AESCipherText -InputCipherText $CipherObject.CipherText -Key $AESKey -ErrorAction Stop
                     $CorrectPassword = $true
-                    $OutputString.add($ConvertedString)
+                    $ConvertedString
                 } Catch {
-                    Write-Warning "Incorrect AES Key. Please try again"
+                    Write-Warning "Failed to decrypt. Incorrect AES key. Check your Master Password."
                     $CorrectPassword = $false
                     Clear-AESMPVariable
                 }
             }
         }
 
-    }
-
-    End {
-        If ($CorrectPassword) {
-            Write-Verbose "Unprotect complete. Returning $($OutputString.count) objects"
-            Return $OutputString
-        }
     }
 }

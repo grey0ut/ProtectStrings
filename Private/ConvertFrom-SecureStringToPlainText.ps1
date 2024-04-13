@@ -8,7 +8,7 @@ Function ConvertFrom-SecureStringToPlainText {
         )
     Process {
         $BSTR = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($StringObj)
-        $PlainText = [Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+        $PlainText = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($BSTR)
         [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($BSTR)
     }
     End {

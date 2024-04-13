@@ -7,9 +7,9 @@ Function Get-DPAPIIdentity {
     Param (
     )
     
-    Write-Debug "Current ENV:Computername : $ENV:COMPUTERNAME"
-    Write-Debug "Current ENV:Computername : $ENV:USERNAME"
-    Write-Debug "Creating DPAPI Identity information"
+    Write-Verbose "Current ENV:COMPUTERNAME : $ENV:COMPUTERNAME"
+    Write-Verbose "Current ENV:USERNAME : $ENV:USERNAME"
+    Write-Verbose "Creating DPAPI Identity information"
     $Output = '{0}\{1}' -f $ENV:COMPUTERNAME,$ENV:USERNAME
-    return $Output
+    $Output
 }

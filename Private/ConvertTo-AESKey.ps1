@@ -17,8 +17,12 @@ Function ConvertTo-AESKey {
     )
 
     Process {
-        Write-Verbose "Retrieving AESKey settings"
-        $Settings = Get-AESKeyConfig 
+        try {
+            Write-Verbose "Retrieving AESKey settings"
+            $Settings = Get-AESKeyConfig -ErrorAction Stop
+        } catch {
+            throw "Failed to get AES Key config settings"
+        }
         Write-Verbose "Converting Salt to byte array"
         $SaltBytes = ConvertFrom-Base64 -Textstring $($Settings.Salt) -OutputType Bytes
         # Temporarily plaintext our SecureString password input. There's really no way around this.
@@ -45,6 +49,6 @@ Function ConvertTo-AESKey {
             $KeyAsSecureString = ConvertTo-SecureString -String $([System.BitConverter]::ToString($Key)) -AsPlainText -Force
             $KeyOutput = $KeyAsSecureString
         }
-        return $KeyOutput
+        $KeyOutput
     }
 }

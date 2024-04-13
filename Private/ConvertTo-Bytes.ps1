@@ -15,5 +15,5 @@ Function ConvertTo-Bytes{
     Write-Debug "Converting Input text to bytes with $Encoding encoding"
     Write-Debug "Input Text: $InputString"
     $Bytes = [System.Text.Encoding]::$Encoding.GetBytes($InputString)
-    return $Bytes
+    $Bytes
 }

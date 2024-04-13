@@ -11,6 +11,6 @@ Function Initialize-AESCipher {
 
     $AESServiceProvider = New-Object System.Security.Cryptography.AesCryptoServiceProvider
     $AESServiceProvider.Key = $Key
-    return $AESServiceProvider
+    $AESServiceProvider
 
 }

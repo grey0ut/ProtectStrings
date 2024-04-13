@@ -14,6 +14,6 @@ Function ConvertFrom-Bytes{
     
         Write-Verbose "Converting from bytes to string using $Encoding encoding"
         $OutputString = [System.Text.Encoding]::$Encoding.GetString($InputBytes)
-        return $OutputString
+        $OutputString
     }
     
