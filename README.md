@@ -80,12 +80,12 @@ PS> Set-AESKeyConfig -Verbose
 VERBOSE: Config file path: C:\Users\Courtney Bodett\AppData\Local\ProtectStringsConfig.psd1
 VERBOSE: 
         Saving settings...
-        Salt........: |Â½ÃÃ´Ã¸wÃšâ™€Ã¥>~IÂ©kâ—„=Ã½Ã±Ã­Ã®
+        Salt........: fMK9w4HDtMO4d8Oa4pmAw6U+fknCqWvil4Q9w73DscOtw64=
         Iterations..: 310000
         Hash........: SHA256
 ```  
   
-These settings can be modified by altering the text file at that path (noting that Salt and Hash should be wrapped in single quotes) or by using the Set-AESKeyConfig (preferred).  Iterations, Salt, and Hash are all parameters of Set-AESKeyConfig and it has a validated set of hash algorithms you can provide and verifies that the provided salt is at least 8 bytes in length.  For best error handling, use Set-AESKeyConfig.  
+These settings can be modified by altering the text file at that path (noting that Salt and Hash should be wrapped in single quotes) or by using the Set-AESKeyConfig (preferred).  The Salt bytes are stored with Base64 encoding, so care would need to be taken to replicate the same.  Iterations, Salt (or SaltBytes), and Hash are all parameters of Set-AESKeyConfig and it has a validated set of hash algorithms you can provide and verifies that the provided salt is at least 8 bytes in length.  For best error handling, use Set-AESKeyConfig.  
   
 By changing any portion of the PBKDF2 settings using Set-AESKeyConfig the resulting key will be completely different even if the same password is provided.  
   
