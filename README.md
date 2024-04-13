@@ -6,7 +6,7 @@ This was also an exercise in using AES encryption in Powershell.  The end result
   
 **WARNING**:
 
-* This has only been tested in Powershell v5.1.  
+* This has only been used mostly in PS v5.1 with limited testing in v7.4.1.  DPAPI functionality is prevented if the module is used on a non-Windows host.   
   
 
 ## Getting Started  
@@ -45,8 +45,8 @@ eyJFbmNyeXB0aW9uIjoiQUVTIiwiQ2lwaGVyVGV4dCI6IlhuVmVSTTNMS3A3MU80bTkwdEREV1pvdmRk
 ```  
     
 ```powershell
-# encrypt a string using the built-in DPAPI encryption  
-PS> Protect-String -InputString "my secret message"   
+# encrypt a string using the built-in DPAPI encryption. Windows only.  
+PS> Protect-String -InputString "my secret message" -Encryption DPAPI  
 eyJFbmNyeXB0aW9uIjoiRFBBUEkiLCJDaXBoZXJUZXh0IjoiMDEwMDAwMDBkMDhjOWRkZjAxMTVkMTExOGM3YTAwYzA0ZmMyOTdlYjAxMDAwMDAwNzNhN2VmN2U2ODMzOTg0ZTg3Nzg2NTA0ZjlhMjFjMTkwMDAwMDAwMDAyMDAwMDAwMDAwMDEwNjYwMDAwMDAwMTAwMDAyMDAwMDAwMGI0NDlhYmJlZGI1ZWY3NzkwNGU4NWYxNGIyNGM1ZmNiYmFmMmVhYmJhNGY3MjAzYzg2YTNiOGM0MDY0N2Q2NzMwMDAwMDAwMDBlODAwMDAwMDAwMjAwMDAyMDAwMDAwMDBlYjNiNTBmZTVkZGEyNWNiNzdjZmQzOTlmYTVjNGZkOTBmNGMxMjgxOTRiYjEwMjYwZDRmZjk3MGMwZjZmYWEzMDAwMDAwMGE4NDlmY2QzZTVmMjFlZTQxMzE5Yjc2ZDk1MzM4N2E2YjUyM2U1YWFiNmQ5MmE0YTlmMTU3MjNhYmYwZWMwN2YzMGJjMWFkZjEyNWRjNDA2MmRmNTIxYzQwMTY5ZjVmMzQwMDAwMDAwOWM0ODRmMWIxMzE1MjkxY2Y0ZDU1Y2U1MTdmNWZmMWQ0MDQyZmI0MDRjZjBiNGM4M2ZhNWY3MjIwZGJiYjI3ODEwYWRkMmNmNjJhNDg3ZGQ5MjBmMGE4YWUxMTY3ZTVjMzAzZjEyMWM3ZjgyY2RlNzdmZTRmOTMyMDc5MTI0OTciLCJEUEFQSUlkZW50aXR5IjoiR1JJU0xPQk9cXENvdXJ0bmV5IEJvZGV0dCJ9  
 ```  
   
@@ -63,7 +63,7 @@ PS> $encryptedtext | Unprotect-String
 Secret message  
 ```  
   
-When protecting a string, Protect-String will choose DPAPI by default.  If you provide the Encryption parameter you can select AES as the value.  If no Master Password was set, you will be prompted to set one.  
+When protecting a string, Protect-String will choose AES by default.  If you provide the Encryption parameter you can select DPAPI as the value.  If no Master Password was set, you will be prompted to set one.  
   
 The output will be Base64 encoded cipher text either way.  Unprotect-String will automatically identify whether the cipher text was produced by AES or DPAPI and try to decrypt appropriately.  
 ### Master Password/AES Key
@@ -74,18 +74,16 @@ If you'd rather export the stored key to import later, rather than remembering t
   
 The settings for the PBKDF2 have hard coded defaults, you can view them by running this command:  
 ```powershell  
-PS> Set-AESKeyConfig -Verbose  
-```  
-```  
-VERBOSE: Config file path: C:\Users\Courtney Bodett\AppData\Local\ProtectStringsConfig.psd1
-VERBOSE: 
-        Saving settings...
-        Salt........: fMK9w4HDtMO4d8Oa4pmAw6U+fknCqWvil4Q9w73DscOtw64=
-        Iterations..: 310000
-        Hash........: SHA256
+PS> Get-AESKeyConfig 
+
+Name                           Value
+----                           -----
+Hash                           SHA256
+Iterations                     600000
+Salt                           fMK9w4HDtMO4d8Oa4pmAw6U+fknCqWvil4Q9w73DscOtw64=
 ```  
   
-These settings can be modified by altering the text file at that path (noting that Salt and Hash should be wrapped in single quotes) or by using the Set-AESKeyConfig (preferred).  The Salt bytes are stored with Base64 encoding, so care would need to be taken to replicate the same.  Iterations, Salt (or SaltBytes), and Hash are all parameters of Set-AESKeyConfig and it has a validated set of hash algorithms you can provide and verifies that the provided salt is at least 8 bytes in length.  For best error handling, use Set-AESKeyConfig.  
+These settings can be modified from the defaults using the Set-AESKeyConfig function.  See the Help info for details about how.  Any non-default settings are stored in an Environment variable for future use.    
   
 By changing any portion of the PBKDF2 settings using Set-AESKeyConfig the resulting key will be completely different even if the same password is provided.  
   
