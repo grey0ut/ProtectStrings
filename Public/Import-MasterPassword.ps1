@@ -38,7 +38,7 @@ Function Import-MasterPassword {
             Write-Verbose "Retreiving file content from: $FilePath"
             $EncodedKey = Get-Content -Path $FilePath -ErrorAction Stop
         } Catch {
-            Write-Error $Error[0]
+            Write-Error $_
         }
     }
 

@@ -11,20 +11,20 @@ Function Protect-String {
     Specify either DPAPI or AES encryption. AES is the default if not specified. DPAPI is not recommended on non-Windows systems are there is no encryption for SecureStrings.
     .EXAMPLE
     PS C:\> Protect-String "Secret message"
-    eyJFbmNyeXB0aW9uIjoiRFBBUEkiLCJDaXBoZXJUZXh0IjoiMDEwMDAwMDBkMDhjOWRkZjAxMTVkMTExOGM3YTAwYzA0ZmMyOTdlYjAxMDAwMDAwODRkMTVhY2QwZjk5ZDM0NDllNzE5MTkwZGI0YzY2ZWUwMDAwMDAwMDAyMDAwMDAwMDAwMDAzNjYwMDAwYzAwMDAwMDAxMDAwMDAwMGMyNjFhZTY5YThjZjdlMTI0ZTJmZWI3MmVmMTk3YmRlMDAwMDAwMDAwNDgwMDAwMGEwMDAwMDAwMTAwMDAwMDA4NjUxZWJjZWY4MTE4MzEzMzljNDMyNjA5OWUxZWY3ZDIwMDAwMDAwZGQ3MDUyNGFkZGZlMmM5YzQyMDlhZDc2NjYzZTlhMzgxMTBjNDJkMjk3ZDNhOGQ2OGY4MGI1NDU0YTIxNTUyZjE0MDAwMDAwZThmYjFmY2YyMzYyM2U4NjRmMDliMzA1ZmI4ZTM1ZWRkMjBmNzU2NCIsIkRQQVBJSWRlbnRpdHkiOiJMTklQQzIwMzQ3NExcXEJvZGV0dEMifQ==
+    D01000000d08c9ddf0115d1118c7a00c04fc297eb010000001a8fc10bbb86cc449a5103047b4b246d0000000002000000000003660000c0000000100000003960a9bffe1fcf050567397531eb71da0000000004800000a00000001000000098435688c310d7254279e472ce2bf2b820000000eaca228aae688c9f8dc1eb304178078cbe0d54364b922d453b8899ca3b438c5a14000000848a67d2fb9c54bd64833d89387c0f4193422ff5?TE5JUEMyMjIxNTBMXEJvZGV0dEM=
 
     This command will encrypt the provided string with DPAPI encryption and return the encoded cipher text.
     .EXAMPLE
     PS C:\> Protect-String "Secret message" -Encryption AES
     Enter Master Password: ********
-    eyJFbmNyeXB0aW9uIjoiQUVTIiwiQ2lwaGVyVGV4dCI6IktUU2RYVG9tREt0M1N5eFN0OGsveGtxc2xjTjhseUZMQTllMDlWQWdkVTA9IiwiRFBBUElJZGVudGl0eSI6IiJ9
+    A7B3uXRDkDZkejQVQhwqn2I4KJjsxfqCbc1a+9Jgg620=
 
     This command will encrypt the provided string with AES 256-bit encryption. If no Master Password is found in the current session (set with Set-MasterPassword) then it will prompt for one  to be set.
     .NOTES
-    Version:        1.2
+    Version:        1.3
     Author:         C. Bodett
-    Creation Date:  4/12/2024
-    Purpose/Change: Updated for cross platform use
+    Creation Date:  12/5/2024
+    Purpose/Change: Changed how output is handled to reduce length
     #>
     [cmdletbinding()]
     Param (
@@ -60,12 +60,13 @@ Function Protect-String {
                     $CipherObject = New-CipherObject -Encryption "DPAPI" -CipherText $ConvertedString
                     $CipherObject.DPAPIIdentity = Get-DPAPIIdentity
                     Write-Verbose "DPAPI Identity: $($CipherObject.DPAPIIdentity)"
-                    $JSONObject = ConvertTo-Json -InputObject $CipherObject -Compress
-                    $JSONBytes = ConvertTo-Bytes -InputString $JSONObject -Encoding UTF8
-                    $EncodedOutput = [System.Convert]::ToBase64String($JSONBytes)
-                    $EncodedOutput
+                    #$JSONObject = ConvertTo-Json -InputObject $CipherObject -Compress
+                    #$JSONBytes = ConvertTo-Bytes -InputString $JSONObject -Encoding UTF8
+                    #$EncodedOutput = [System.Convert]::ToBase64String($JSONBytes)
+                    #$EncodedOutput
+                    $CipherObject.ToCompressed()
                 } Catch {
-                    Write-Error $Error[0]
+                    Write-Error $_
                 }
             }
             "AES" {
@@ -73,12 +74,13 @@ Function Protect-String {
                     Write-Verbose "Encrypting string text with AES 256-bit"
                     $ConvertedString = ConvertTo-AESCipherText -InputString $InputString -Key $AESKey -ErrorAction Stop
                     $CipherObject = New-CipherObject -Encryption "AES" -CipherText $ConvertedString
-                    $JSONObject = ConvertTo-Json -InputObject $CipherObject -Compress
-                    $JSONBytes = ConvertTo-Bytes -InputString $JSONObject -Encoding UTF8
-                    $EncodedOutput = [System.Convert]::ToBase64String($JSONBytes)
-                    $EncodedOutput
+                    #$JSONObject = ConvertTo-Json -InputObject $CipherObject -Compress
+                    #$JSONBytes = ConvertTo-Bytes -InputString $JSONObject -Encoding UTF8
+                    #$EncodedOutput = [System.Convert]::ToBase64String($JSONBytes)
+                    #$EncodedOutput
+                    $CipherObject.ToCompressed()
                 } Catch {
-                    Write-Error $Error[0]
+                    Write-Error $_
                 }
             }
         }

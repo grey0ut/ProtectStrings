@@ -6,7 +6,7 @@ This was also an exercise in using AES encryption in Powershell.  The end result
   
 **WARNING**:
 
-* This has only been used mostly in PS v5.1 with limited testing in v7.4.1.  DPAPI functionality is prevented if the module is used on a non-Windows host.   
+* This has been used mostly in PS v5.1 with limited testing in v7.4.6.  DPAPI functionality is prevented if the module is used on a non-Windows host.   
   
 
 ## Getting Started  
@@ -41,19 +41,19 @@ PS> Set-MasterPassword -MasterPassword $MasterPassword
 ```powershell
 # encrypt a string using AES encryption  
 PS> Protect-String -InputString "my secret message" -Encryption AES  
-eyJFbmNyeXB0aW9uIjoiQUVTIiwiQ2lwaGVyVGV4dCI6IlhuVmVSTTNMS3A3MU80bTkwdEREV1pvdmRkRTZ5TWl5WnFNNGM5bHgyWWxMdWc1Z3JmR3p0elB6ZzVhMG1YMWMiLCJEUEFQSUlkZW50aXR5IjoiIn0=  
+A7B3uXRDkDZkejQVQhwqn2I4KJjsxfqCbc1a+9Jgg620=
 ```  
     
 ```powershell
 # encrypt a string using the built-in DPAPI encryption. Windows only.  
 PS> Protect-String -InputString "my secret message" -Encryption DPAPI  
-eyJFbmNyeXB0aW9uIjoiRFBBUEkiLCJDaXBoZXJUZXh0IjoiMDEwMDAwMDBkMDhjOWRkZjAxMTVkMTExOGM3YTAwYzA0ZmMyOTdlYjAxMDAwMDAwNzNhN2VmN2U2ODMzOTg0ZTg3Nzg2NTA0ZjlhMjFjMTkwMDAwMDAwMDAyMDAwMDAwMDAwMDEwNjYwMDAwMDAwMTAwMDAyMDAwMDAwMGI0NDlhYmJlZGI1ZWY3NzkwNGU4NWYxNGIyNGM1ZmNiYmFmMmVhYmJhNGY3MjAzYzg2YTNiOGM0MDY0N2Q2NzMwMDAwMDAwMDBlODAwMDAwMDAwMjAwMDAyMDAwMDAwMDBlYjNiNTBmZTVkZGEyNWNiNzdjZmQzOTlmYTVjNGZkOTBmNGMxMjgxOTRiYjEwMjYwZDRmZjk3MGMwZjZmYWEzMDAwMDAwMGE4NDlmY2QzZTVmMjFlZTQxMzE5Yjc2ZDk1MzM4N2E2YjUyM2U1YWFiNmQ5MmE0YTlmMTU3MjNhYmYwZWMwN2YzMGJjMWFkZjEyNWRjNDA2MmRmNTIxYzQwMTY5ZjVmMzQwMDAwMDAwOWM0ODRmMWIxMzE1MjkxY2Y0ZDU1Y2U1MTdmNWZmMWQ0MDQyZmI0MDRjZjBiNGM4M2ZhNWY3MjIwZGJiYjI3ODEwYWRkMmNmNjJhNDg3ZGQ5MjBmMGE4YWUxMTY3ZTVjMzAzZjEyMWM3ZjgyY2RlNzdmZTRmOTMyMDc5MTI0OTciLCJEUEFQSUlkZW50aXR5IjoiR1JJU0xPQk9cXENvdXJ0bmV5IEJvZGV0dCJ9  
+D01000000d08c9ddf0115d1118c7a00c04fc297eb010000001a8fc10bbb86cc449a5103047b4b246d0000000002000000000003660000c0000000100000003960a9bffe1fcf050567397531eb71da0000000004800000a00000001000000098435688c310d7254279e472ce2bf2b820000000eaca228aae688c9f8dc1eb304178078cbe0d54364b922d453b8899ca3b438c5a14000000848a67d2fb9c54bd64833d89387c0f4193422ff5?TE5JUEMyMjIxNTBMXEJvZGV0dEM=
 ```  
   
 ```powershell  
 # Protect-String and Unprotect-String both accept pipe-line input  
 PS> "Secret message" | Protect-String -Encryption AES  
-eyJFbmNyeXB0aW9uIjoiQUVTIiwiQ2lwaGVyVGV4dCI6IlhDdnZwcUoxdm90OU9UQ0RFTkxRWkFPSk1zSDFFcjJJTXFiemdWaUpBU1U9IiwiRFBBUElJZGVudGl0eSI6IiJ9  
+A7B3uXRDkDZkejQVQhwqn2I4KJjsxfqCbc1a+9Jgg620=
 ```  
 
 ```powershell
@@ -100,11 +100,11 @@ $CSV | Select-Object -First 5
 ```  
 User    Password                                                                                                                                Name            Department
 ----    --------                                                                                                                                ----            ----------
-jsmith  eyJFbmNyeXB0aW9uIjoiQUVTIiwiQ2lwaGVyVGV4dCI6Im9UYituVFQ1Y005d09ZZTM5UGJVenMzZzY2dzYwYkRCZHFMamYwdCtVY009IiwiRFBBUElJZGVudGl0eSI6IiJ9    John Smith      Accounting
-bclark  eyJFbmNyeXB0aW9uIjoiQUVTIiwiQ2lwaGVyVGV4dCI6ImdMYUJ6RWhpNytobHpEaExpSlY4YTA3VXhUL1V3aUZ0RTNrb3ZzVWtUSWM9IiwiRFBBUElJZGVudGl0eSI6IiJ9    Bob Clark       Human Resources  
-jkent   eyJFbmNyeXB0aW9uIjoiQUVTIiwiQ2lwaGVyVGV4dCI6IllhZ2NVdFdvYTZMOW5JVEhKMDM0b0pqeEROU2FIbEtONUJHMmltbGN2NnM9IiwiRFBBUElJZGVudGl0eSI6IiJ9    James Kent      Information Technology  
-cdouglas eyJFbmNyeXB0aW9uIjoiQUVTIiwiQ2lwaGVyVGV4dCI6InUyblhVSFlqbkEwUE9KbUpBek1Gd2k1U0orWndJQ3gxUjlQdHIxY0h6K2s9IiwiRFBBUElJZGVudGl0eSI6IiJ9   Corey Douglas   Accounting  
-bchester eyJFbmNyeXB0aW9uIjoiQUVTIiwiQ2lwaGVyVGV4dCI6Ijc2Ui9oNEFOR1Q1dTNVSnpyd1RxN3h3SzdENEpTSEU2L1N2Mlo2aEx0dmc9IiwiRFBBUElJZGVudGl0eSI6IiJ9   Bill Chester    Facilities
+jsmith  AwGfd70iBoVkUUh0mq/HF4g2VVGmfqOB68zQFzhfD/cY=    John Smith      Accounting
+bclark  AjR3gZNFKxYEqTKUNOQPEkfK43fxdTKluUzhUjrNmUmE=    Bob Clark       Human Resources  
+jkent   Abwb9NtTwnyyLm7vUMKmEgr4/QIUpnJUK7fcen4/sLP0=    James Kent      Information Technology  
+cdouglas AJyOYcDcx2E5mXrDkOisptvqnrr3Hcxm5eqwMD8KaGeY=   Corey Douglas   Accounting  
+bchester AUD3RQCSCQHWE13tVi2hQLs2jCkwmVevERYT7/cduurY=   Bill Chester    Facilities
 ```  
   
 Then while the CSV was loaded in to a variable (memory) I could loop through and use Unprotect-String to view the recovered passwords.  When I was done, I could use Protect-String again with AES encryption and the same Master Password, and then Export-CSV to save my work to file again.  All the while knowing that the sensitive data was encrypted within the file.  Are there other solutions out there? Probably, but this one was more fun and I got to make something.  

@@ -17,7 +17,7 @@ Function Get-AESKeyConfig {
         try {
             $Settings = $EnvConfig | ConvertFrom-Json -ErrorAction Stop
         } catch {
-            throw $Error[0]
+            throw $_
         }
     } else {
         # Default settings

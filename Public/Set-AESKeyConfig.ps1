@@ -51,14 +51,14 @@ Function Set-AESKeyConfig {
                 try {
                     $Settings.Salt = ConvertTo-Base64 -TextString $SaltString
                 } catch {
-                    Throw $Error[0]
+                    Throw $_
                 }
             }
             'SaltBytes' {
                 try {
                     $Settings.Salt = ConvertTo-Base64 -Bytes $SaltBytes
                 } catch {
-                    Throw $Error[0]
+                    Throw $_
                 }
             }
             'Iterations'    { 

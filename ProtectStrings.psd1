@@ -4,7 +4,7 @@
 RootModule = 'ProtectStrings.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.26.2'
+ModuleVersion = '1.26.5'
 
 # Supported PSEditions
 CompatiblePSEditions = @("Desktop","Core")

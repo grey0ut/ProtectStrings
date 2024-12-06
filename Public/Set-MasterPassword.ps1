@@ -38,7 +38,7 @@ Function Set-MasterPassword {
         Write-Verbose "Generating a 256-bit AES key from provided password"
         $SecureAESKey = ConvertTo-AESKey $MasterPassword
     } Catch {
-        throw $Error[0]
+        throw $_
     }
     Write-Verbose "Storing key for use within this session. Can be removed with Remove-MasterPassword"
     Set-AESMPVariable -MPKey $SecureAESKey
