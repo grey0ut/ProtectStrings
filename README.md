@@ -1,3 +1,7 @@
+<div align='center'>
+<img src='Assets/protectstrings.svg' />
+</div>  
+
 ProtectStrings
 ==============  
 
