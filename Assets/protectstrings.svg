@@ -1,14 +1,14 @@
 <svg viewBox="0 0 200 100" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
-    <text x="20%" y="35%" font-size="36" dominant-baseline="middle" text-anchor="middle" fill="#4488FF">
+    <text x="20%" y="35%" font-size="36" dominant-baseline="middle" text-anchor="middle" fill="#4488FF" font-family="monospace">
         P
     </text>
-    <text x="57%" y="35%" font-size="36" dominant-baseline="middle" text-anchor="middle" fill="#5e81ac">
+    <text x="57%" y="35%" font-size="36" dominant-baseline="middle" text-anchor="middle" fill="#5e81ac" font-family="monospace">
         rotect
     </text>
-    <text x="25%" y="65%" font-size="36" dominant-baseline="middle" text-anchor="middle" fill="#4488FF">
+    <text x="25%" y="65%" font-size="36" dominant-baseline="middle" text-anchor="middle" fill="#4488FF" font-family="monospace">
         S
     </text>
-    <text x="63%" y="65%" font-size="36" dominant-baseline="middle" text-anchor="middle" fill="#5e81ac">
+    <text x="63%" y="65%" font-size="36" dominant-baseline="middle" text-anchor="middle" fill="#5e81ac" font-family="monospace">
         trings
     </text>
 </svg>
