@@ -1,5 +1,5 @@
 <div align='center'>
-<img src='Assets/protectstrings.svg' />
+<img src='Assets/ProtectStrings.svg' />
 </div>  
 
 ProtectStrings

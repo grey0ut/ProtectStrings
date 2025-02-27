@@ -1,0 +1,16 @@
+<svg viewBox="0 0 200 100" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        text {
+            fill : #5e81ac;
+        }
+        tspan {
+            fill : #4488FF;
+        }
+    </style>
+	<text x="45%" y="35%" text-anchor="middle" dominant-baseline="middle" font-size="36" font-family="monospace">
+        <tspan>P</tspan>rotect
+    </text>
+	<text x="50%" y="65%" text-anchor="middle" dominant-baseline="middle" font-size="36" font-family="monospace">
+        <tspan>S</tspan>trings
+    </text>
+</svg>
