@@ -60,10 +60,6 @@ Function Protect-String {
                     $CipherObject = New-CipherObject -Encryption "DPAPI" -CipherText $ConvertedString
                     $CipherObject.DPAPIIdentity = Get-DPAPIIdentity
                     Write-Verbose "DPAPI Identity: $($CipherObject.DPAPIIdentity)"
-                    #$JSONObject = ConvertTo-Json -InputObject $CipherObject -Compress
-                    #$JSONBytes = ConvertTo-Bytes -InputString $JSONObject -Encoding UTF8
-                    #$EncodedOutput = [System.Convert]::ToBase64String($JSONBytes)
-                    #$EncodedOutput
                     $CipherObject.ToCompressed()
                 } Catch {
                     Write-Error $_
@@ -74,10 +70,6 @@ Function Protect-String {
                     Write-Verbose "Encrypting string text with AES 256-bit"
                     $ConvertedString = ConvertTo-AESCipherText -InputString $InputString -Key $AESKey -ErrorAction Stop
                     $CipherObject = New-CipherObject -Encryption "AES" -CipherText $ConvertedString
-                    #$JSONObject = ConvertTo-Json -InputObject $CipherObject -Compress
-                    #$JSONBytes = ConvertTo-Bytes -InputString $JSONObject -Encoding UTF8
-                    #$EncodedOutput = [System.Convert]::ToBase64String($JSONBytes)
-                    #$EncodedOutput
                     $CipherObject.ToCompressed()
                 } Catch {
                     Write-Error $_
