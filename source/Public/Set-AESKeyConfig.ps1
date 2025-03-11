@@ -16,10 +16,10 @@ Function Set-AESKeyConfig {
     .Parameter Defaults
     Removes the Environment variable containing config. 
     .NOTES
-    Version:        3.0
+    Version:        4.0
     Author:         C. Bodett
-    Creation Date:  4/12/2024
-    Purpose/Change: Moved parameter validation to Param Block and changed storage method from file to ENV variable
+    Creation Date:  3/10/2025
+    Purpose/Change: Switched save method to file on disk since Environment variables didn't work on Linux/MacOS
     #>
     [cmdletbinding(DefaultParameterSetName = 'none')]
     Param (
@@ -45,6 +45,18 @@ Function Set-AESKeyConfig {
 
     $Settings = Get-AESKeyConfig
 
+    # check to see if we're on Windows or not
+    if ($IsWindows -or $ENV:OS) {
+        $Windows = $true
+    } else {
+        $Windows = $false
+    }
+    if ($Windows) {
+        $SettingsPath = Join-Path -Path $Env:APPDATA -ChildPath "ProtectStrings" -AdditionalChildPath Settings.json
+    } else {
+        $SettingsPath = Join-Path -Path ([Environment]::GetEnvironmentVariable("HOME")) -ChildPath ".local" -AdditionalChildPath "share","powershell","Modules","ProtectStrings",Settings.json
+    }
+
     if (-not($Defaults)) {
         Switch ($PSBoundParameters.Keys) {
             'SaltString' {
@@ -69,14 +81,30 @@ Function Set-AESKeyConfig {
             }
         }
 $VMsg = @"
-`r`n    Saving settings to ENV:ProtectStrings
+`r`n    Saving settings to $SettingsPath
         Salt........: $($Settings.Salt)
         Iterations..: $($Settings.Iterations)
         Hash........: $($Settings.Hash)
 "@
         Write-Verbose $VMsg
-        [Environment]::SetEnvironmentVariable("ProtectStrings", ($Settings | ConvertTo-Json -Compress), "User")
+        try {
+            if (Test-Path $SettingsPath) {
+                $Settings | ConvertTo-Json | Out-File -Path $SettingsPath -Force
+                } else {
+                    New-Item -Path $SettingsPath -Force | Out-Null
+                    $Settings | ConvertTo-Json | Out-File -Path $SettingsPath
+                }
+        } catch {
+            throw $_
+            }
     } else {
-        [System.Environment]::SetEnvironmentVariable("ProtectStrings", $null, "User")
+        try {
+            Write-Verbose "Removing settings file at $($SettingsPath)"
+            Remove-Item -Path $SettingsPath -Force -ErrorAction Stop
+        } catch [System.Management.Automation.ItemNotFoundException] {
+            Write-Warning "No settings file found"
+        } catch {
+            throw $_
+        }
     }
 }
