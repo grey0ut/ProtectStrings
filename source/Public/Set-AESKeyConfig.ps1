@@ -52,9 +52,9 @@ Function Set-AESKeyConfig {
         $Windows = $false
     }
     if ($Windows) {
-        $SettingsPath = Join-Path -Path $Env:APPDATA -ChildPath "ProtectStrings" -AdditionalChildPath Settings.json
+        $SettingsPath = Join-Path -Path $Env:APPDATA -ChildPath "ProtectStrings\Settings.json"
     } else {
-        $SettingsPath = Join-Path -Path ([Environment]::GetEnvironmentVariable("HOME")) -ChildPath ".local" -AdditionalChildPath "share","powershell","Modules","ProtectStrings",Settings.json
+        $SettingsPath = Join-Path -Path ([Environment]::GetEnvironmentVariable("HOME")) -ChildPath ".local/share/powershell/Modules/ProtectStrings/Settings.json"
     }
 
     if (-not($Defaults)) {
@@ -89,10 +89,10 @@ $VMsg = @"
         Write-Verbose $VMsg
         try {
             if (Test-Path $SettingsPath) {
-                $Settings | ConvertTo-Json | Out-File -Path $SettingsPath -Force
+                $Settings | ConvertTo-Json | Out-File -FilePath $SettingsPath -Force
                 } else {
                     New-Item -Path $SettingsPath -Force | Out-Null
-                    $Settings | ConvertTo-Json | Out-File -Path $SettingsPath
+                    $Settings | ConvertTo-Json | Out-File -FilePath $SettingsPath
                 }
         } catch {
             throw $_

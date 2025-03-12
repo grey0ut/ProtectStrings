@@ -20,14 +20,14 @@ Function Get-AESKeyConfig {
         $Windows = $false
     }
     if ($Windows) {
-        $SettingsPath = Join-Path -Path $Env:APPDATA -ChildPath "ProtectStrings" -AdditionalChildPath Settings.json
+        $SettingsPath = Join-Path -Path $Env:APPDATA -ChildPath "ProtectStrings\Settings.json"
     } else {
-        $SettingsPath = Join-Path -Path ([Environment]::GetEnvironmentVariable("HOME")) -ChildPath ".local" -AdditionalChildPath "share","powershell","Modules","ProtectStrings",Settings.json
+        $SettingsPath = Join-Path -Path ([Environment]::GetEnvironmentVariable("HOME")) -ChildPath ".local/share/powershell/Modules/ProtectStrings/Settings.json"
     }
 
     if (Test-Path $SettingsPath) {
         try {
-            $Settings = Get-Content -Path $SettingsPath | ConvertFrom-Json -AsHashtable
+            $Settings = Get-Content -Path $SettingsPath | ConvertFrom-Json
         } catch {
             throw $_
         }
