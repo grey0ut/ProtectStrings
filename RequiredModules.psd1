@@ -15,10 +15,15 @@
     InvokeBuild                 = 'latest'
     PSScriptAnalyzer            = 'latest'
     Pester                      = 'latest'
-    ModuleBuilder               = 'latest'
+    #ModuleBuilder               = 'latest'
     ChangelogManagement         = 'latest'
     Sampler                     = 'latest'
-
+	'ModuleBuilder' = @{
+		  Version    = 'latest'
+		  Parameters = @{
+			 AllowPrerelease = $true
+		  }
+	   }
 
 
 }
