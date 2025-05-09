@@ -52,7 +52,9 @@ function Protect-String {
             "DPAPI" {
                 try {
                     Write-Verbose "Converting string text to a SecureString object"
-                    $ConvertedString = ConvertTo-SecureString $InputString -AsPlainText -Force | ConvertFrom-SecureString
+                    $StringBytes = [System.Text.Encoding]::UTF8.GetBytes($InputString)
+                    $DPAPIBytes = [System.Security.Cryptography.ProtectedData]::Protect($StringBytes, $null, [System.Security.Cryptography.DataProtectionScope]::CurrentUser)
+                    $ConvertedString = [System.Convert]::ToBase64String($DPAPIBytes)
                     $CipherObject = New-CipherObject -Encryption "DPAPI" -CipherText $ConvertedString
                     $CipherObject.DPAPIIdentity = '{0}\{1}' -f $ENV:COMPUTERNAME,$ENV:USERNAME
                     Write-Verbose "DPAPI Identity: $($CipherObject.DPAPIIdentity)"

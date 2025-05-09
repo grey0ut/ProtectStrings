@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - changed Remove-MasterPassword to Clear-MasterPassword
 - changed RNG from RNGCryptoServiceProvider to RandomNumberGenrator
+- changed from Convert*-SecureString cmdlets to the .NET System.Security.Cryptography.ProtectedData class
 
 ### Fixed
 

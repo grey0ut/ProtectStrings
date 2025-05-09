@@ -57,9 +57,10 @@ function UnProtect-String {
         switch ($CipherObject.Encryption) {
             "DPAPI" {
                 try {
-                    Write-Verbose "Attempting to create a SecureString object from DPAPI cipher text"
-                    $SecureStringObj = ConvertTo-SecureString -String $CipherObject.CipherText -ErrorAction Stop
-                    $ConvertedString = ConvertFrom-SecureStringToPlainText -StringObj $SecureStringObj -ErrorAction Stop
+                    Write-Verbose "Attempting to decrypt with DPAPI"
+                    $DPAPIBytes = [System.Convert]::FromBase64String($CipherObject.CipherText)
+                    $DecryptedBytes = [System.Security.Cryptography.ProtectedData]::UnProtect($DPAPIBytes, $null, [System.Security.Cryptography.DataProtectionScope]::CurrentUser)
+                    $ConvertedString = [System.Text.Encoding]::UTF8.GetString($DecryptedBytes)
                     $ConvertedString
                 } catch {
                     Write-Warning "Unable to decrypt as this user on this machine"

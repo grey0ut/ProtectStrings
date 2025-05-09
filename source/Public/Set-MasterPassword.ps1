@@ -37,6 +37,5 @@ function Set-MasterPassword {
         throw $_
     }
     Write-Verbose "Storing key for use within this session. Can be removed with Remove-MasterPassword"
-    Set-AESMPVariable -MPKey $SecureAESKey
     New-Variable -Name "AESMP" -Value $SecureAESKey -Option AllScope -Scope Global -Force
 }

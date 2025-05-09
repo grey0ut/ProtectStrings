@@ -60,7 +60,7 @@ function Set-AESKeyConfig {
         switch ($PSBoundParameters.Keys) {
             'SaltString' {
                 try {
-                    $Settings.Salt = [System.Convert]::ToBase64String([System.Text.Encoding]::$Encoding.GetBytes($SaltString))
+                    $Settings.Salt = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($SaltString))
                 } catch {
                     Throw $_
                 }

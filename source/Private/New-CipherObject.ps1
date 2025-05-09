@@ -12,6 +12,7 @@ function New-CipherObject {
     New-CipherObject -Encryption AES -CipherText "AQ=="
     #>
     [cmdletbinding()]
+    [OutputType([CipherObject])]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions','',Justification='Does not actually change system state')]
     param (
         [Parameter(Mandatory = $true, Position = 0)]
