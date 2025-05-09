@@ -7,23 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- For new features.
-
 ### Changed
 
-- For changes in existing functionality.
-
-### Deprecated
-
-- For soon-to-be removed features.
-
-### Removed
-
-- For now removed features.
+- changed Remove-MasterPassword to Clear-MasterPassword
+- changed ConvertFrom-Bytes to singular
+- changed ConvertTo-Bytes to singular
 
 ### Fixed
 
-- For any bug fix.
+- satisfied PSScriptAnalyzer tests
 
 ### Security
 

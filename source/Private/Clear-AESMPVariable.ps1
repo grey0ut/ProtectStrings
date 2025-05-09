@@ -1,18 +1,17 @@
-<#
-.Synopsis
-Clear the global variable of the previously stored master password/key
-.NOTES
-Version:        1.0
-Author:         C. Bodett
-Creation Date:  03/28/2022
-Purpose/Change: Initial function development
-#>
-Function Clear-AESMPVariable {
+function Clear-AESMPVariable {
+    <#
+    .SYNOPSIS
+    Clear the global variable of the previously stored master password/key
+    .DESCRIPTION
+    Clear the global variable of the previously stored master password/key. This is a private function that won't be exposed to the session
+    .EXAMPLE
+    Clear-AESMPVariable
+    #>
     [cmdletbinding()]
-    Param (
+    param (
     )
 
-    Process {
+    process {
         Write-Verbose "Clearing global variable where AES key is stored"
         Remove-Variable -Name "AESMP" -Force -Scope Global -ErrorAction SilentlyContinue
     }

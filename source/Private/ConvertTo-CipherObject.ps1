@@ -1,11 +1,17 @@
-<#
-.Synopsis
-Convert output from Protect-String in to a Cipher Object
-#>
-Function ConvertTo-CipherObject {
+function ConvertTo-CipherObject {
+    <#
+    .SYNOPSIS
+    Convert output from Protect-String in to a Cipher Object
+    .DESCRIPTION
+    Convert output from Protect-String in to a Cipher Object. This is a private function that won't be exposed to the session.
+    .PARAMETER B64String
+    The base64 string to instantiate in to a cipher object
+    .EXAMPLE
+    ConvertTo-CipherObject -B64String VQ==
+    #>
     [cmdletbinding()]
-    Param (
-        [String]$B64String
+    param (
+        [string]$B64String
     )
 
     switch ($B64String[0]) {
@@ -18,7 +24,7 @@ Function ConvertTo-CipherObject {
             $CipherText = $B64String.SubString(1,$B64String.IndexOf('?')-1)
             $DPAPIIdB64 = $B64String.SubString($B64String.IndexOf('?')+1)
             $DPAPIIdBytes = [System.Convert]::FromBase64String($DPAPIIdB64)
-            $DPAPIIdentity = ConvertFrom-Bytes -InputBytes $DPAPIIdBytes -Encoding UTF8
+            $DPAPIIdentity = ConvertFrom-Byte -InputBytes $DPAPIIdBytes -Encoding UTF8
         }
         default {
             Write-Verbose "Does not appear to be ProtectStrings module ciphertext"
@@ -36,6 +42,6 @@ Function ConvertTo-CipherObject {
     if ($Encryption -eq "DPAPI") {
         $CipherObject.DPAPIIdentity = $DPAPIIdentity
     }
-    
+
     $CipherObject
 }

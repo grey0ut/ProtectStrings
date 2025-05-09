@@ -1,16 +1,19 @@
-Function Get-AESKeyConfig {
+function Get-AESKeyConfig {
     <#
-    .Synopsis
+    .SYNOPSIS
     Function to retrieve settings for use with PBKDF2 to create an AES Key
-    .NOTES
-    Version:        4.0
-    Author:         C. Bodett
-    Creation Date:  3/10/2025
-    Purpose/Change: Switched save method to file on disk since Environment variables didn't work on Linux/MacOS
+    .DESCRIPTION
+    Function to retrieve the PBKDF2 parameters that are currently set.  These parameters control the strength of the derived key.  Ships with OWASP recommended defaults but can be
+    changed using the Set-AESKeyConfig function.  Use Get-AESKeyconfig to confirm current settings.
+    .EXAMPLE
+    PS> Get-AESKeyConfig
+
+    Hash   Iterations Salt
+    ----   ---------- ----
+    SHA384    1000000 fMK9w4HDtMO4d8Oa4pmAw6U+fknCqWvil4Q9w73DscOtw64=
     #>
     [cmdletbinding()]
-    Param (
-        # No Parameters
+    param (
     )
 
     # check to see if we're on Windows or not

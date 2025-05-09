@@ -1,12 +1,12 @@
-Function UnProtect-String {
+function UnProtect-String {
     <#
-    .Synopsis
+    .SYNOPSIS
     Decrypt a provided string using either DPAPI or AES encryption
-    .Description
-    This function will decode the provided protected text, and automatically determine if it was encrypted using DPAPI or AES encryption. 
-    If no master password has been set it will prompt for one. 
-    If there is a decryption problem it will notify. 
-    .Parameter InputString
+    .DESCRIPTION
+    This function will decode the provided protected text, and automatically determine if it was encrypted using DPAPI or AES encryption.
+    If no master password has been set it will prompt for one.
+    If there is a decryption problem it will notify.
+    .PARAMETER InputString
     This is the protected text previously produced by the ProtectStrings module. Encryption type will be automatically determined.
     .EXAMPLE
     PS C:\> Protect-String "Secret message"
@@ -31,51 +31,46 @@ Function UnProtect-String {
     Secret message
 
     Clearing the master password from the sessino, providing the previously protected text to Unprotect-String will prompt for a master password and then decrypt the text and return the original string text.
-    .NOTES
-    Version:        1.4.
-    Author:         C. Bodett
-    Creation Date:  12/5/2024
-    Purpose/Change: updated to handle the new output type from Protect-String
     #>
     [cmdletbinding()]
-    Param (
+    param (
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
-        [String]$InputString
+        [string]$InputString
     )
-    
-    Process {
+
+    process {
         Write-Verbose "Converting supplied text to a Cipher Object for ProtectStrings"
-        $CipherObject = Try {
+        $CipherObject = try {
             ConvertTo-CipherObject $InputString -ErrorAction Stop
-        } Catch {
+        } catch {
             Write-Warning "Supplied text could not be converted to a Cipher Object. Verify that it was produced by Protect-String."
             return
         }
         Write-Verbose "Encryption type: $($CipherObject.Encryption)"
-        If ($CipherObject.Encryption -eq "AES") {
+        if ($CipherObject.Encryption -eq "AES") {
             $SecureAESKey = Get-AESMPVariable
             $ClearTextAESKey = ConvertFrom-SecureStringToPlainText $SecureAESKey
             $AESKey = Convert-HexStringToByteArray -HexString $ClearTextAESKey
         }
 
-        Switch ($CipherObject.Encryption) {
+        switch ($CipherObject.Encryption) {
             "DPAPI" {
-                Try {
+                try {
                     Write-Verbose "Attempting to create a SecureString object from DPAPI cipher text"
                     $SecureStringObj = ConvertTo-SecureString -String $CipherObject.CipherText -ErrorAction Stop
                     $ConvertedString = ConvertFrom-SecureStringToPlainText -StringObj $SecureStringObj -ErrorAction Stop
                     $ConvertedString
-                } Catch {
+                } catch {
                     Write-Warning "Unable to decrypt as this user on this machine"
                     Write-Verbose "String protected by Identity: $($CipherObject.DPAPIIdentity)"
                 }
             }
             "AES" {
-                Try {
+                try {
                     Write-Verbose "Attempting to decrypt AES cipher text"
                     $ConvertedString = ConvertFrom-AESCipherText -InputCipherText $CipherObject.CipherText -Key $AESKey -ErrorAction Stop
                     $ConvertedString
-                } Catch {
+                } catch {
                     Write-Warning "Failed to decrypt. Incorrect AES key. Check your Master Password."
                     Clear-AESMPVariable
                 }

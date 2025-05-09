@@ -1,21 +1,21 @@
-<#
-.Synopsis
-Set the password derived key to a global session variable for future use.
-.NOTES
-Version:        1.0
-Author:         C. Bodett
-Creation Date:  03/27/2022
-Purpose/Change: Initial function development
-#>
-Function Set-AESMPVariable {
+function Set-AESMPVariable {
+    <#
+    .SYNOPSIS
+    set the password derived key to a global session variable for future use.
+    .DESCRIPTION
+    set the password derived key to a global session variable for future use. This is a private function and won't be exposed to the session.
+    .PARAMETER MPKey
+    The SecureString object containing the 256-bit key derived from the master password.
+    .EXAMPLE
+    Set-AESMPVariable -MPKey $Key
+    #>
     [cmdletbinding()]
-    Param (
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions','',Justification='Does not actually change system state')]
+    param (
         [Parameter(Mandatory = $true, Position = 0)]
         [SecureString]$MPKey
     )
 
-    Process {
-        Write-Verbose "Creating new variable globally to store AES Key"
-        New-Variable -Name "AESMP" -Value $MPKey -Option AllScope -Scope Global -Force
-    }
+    Write-Verbose "Creating new variable globally to store AES Key"
+    New-Variable -Name "AESMP" -Value $MPKey -Option AllScope -Scope Global -Force
 }

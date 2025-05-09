@@ -1,21 +1,19 @@
-Function Get-MasterPassword {
+function Get-MasterPassword {
     <#
-    .Synopsis
+    .SYNOPSIS
     Returns the saved MasterPassword derived key.
-    .Description
+    .DESCRIPTION
     This function is mostly used to verify that a MasterPassword is currently stored. It returns a SecureString object with the current stored AES key.
+    .PARAMETER Boolean
+    Will return true/false instead of returning a SecureString object
     .EXAMPLE
     PS C:\> Get-MasterPassword
+    System.Security.SecureString
 
-    does stuff
-    .NOTES
-    Version:        1.0
-    Author:         C. Bodett
-    Creation Date:  3/28/2022
-    Purpose/Change: Initial function development
     #>
     [cmdletbinding()]
-    Param (
+    [OutputType([System.Security.SecureString], [bool])]
+    param (
         [Switch]$Boolean
     )
     Write-Verbose "Checking for stored AES key"
@@ -25,5 +23,4 @@ Function Get-MasterPassword {
     } else {
         Get-AESMPVariable
     }
-
 }

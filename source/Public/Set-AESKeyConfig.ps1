@@ -1,28 +1,27 @@
-Function Set-AESKeyConfig {
+function Set-AESKeyConfig {
     <#
-    .Synopsis
+    .SYNOPSIS
     Control the settings for use with PBKDF2 to create an AES Key
-    .Description
-    Allows custom configuration of the parameters associated with the PBKDF2 key generation. User can dictate the Salt, Iterations and Hash algorithm. 
+    .DESCRIPTION
+    Allows custom configuration of the parameters associated with the PBKDF2 key generation. User can dictate the Salt, Iterations and Hash algorithm.
     If called with no parameters the default settings are saved to an Environment variable named ProtectStrings.
-    .Parameter SaltString
+    .PARAMETER SaltString
     Provide a custom string to be used as the Salt bytes in PBKDF2 generation. Must be at least 16 bytes in length.
-    .Parameter SaltBytes
+    .PARAMETER SaltBytes
     A byte array of at least 16 bytes can be provided for a custom salt value.
-    .Parameter Iterations
+    .PARAMETER Iterations
     Specify the number of iterations PBKDF2 should use. 600000 is the default.
-    .Parameter Hash
+    .PARAMETER Hash
     Specify the Hash type used with PBKDF2. Accetable values are: 'MD5','SHA1','SHA256','SHA384','SHA512'.
-    .Parameter Defaults
-    Removes the Environment variable containing config. 
-    .NOTES
-    Version:        4.0
-    Author:         C. Bodett
-    Creation Date:  3/10/2025
-    Purpose/Change: Switched save method to file on disk since Environment variables didn't work on Linux/MacOS
+    .PARAMETER Defaults
+    Removes the Environment variable containing config.
+    .EXAMPLE
+    PS> Set-AESKeyConfig -Hash SHA512 -Iterations 1000000
+
+    This will leave the default salt but change the hash algorithm to SHA512 (from SHA256) and increase the iterations from 600,000 to 1,000,000.
     #>
-    [cmdletbinding(DefaultParameterSetName = 'none')]
-    Param (
+    [cmdletbinding(DefaultParameterSetName = 'none',SupportsShouldProcess)]
+    param (
         [Parameter(Mandatory = $false, ParameterSetName = "SaltString")]
         [ValidateScript({
             if ([System.Text.Encoding]::UTF8.GetBytes($_).Count -lt 16) {
@@ -31,16 +30,16 @@ Function Set-AESKeyConfig {
                 return $true
             }
         })]
-        [String]$SaltString,
+        [string]$SaltString,
         [Parameter(Mandatory = $false, ParameterSetName = "SaltBytes")]
         [ValidateCount(16,256)]
-        [Byte[]]$SaltBytes,
+        [byte[]]$SaltBytes,
         [Parameter(Mandatory = $false)]
-        [Int32]$Iterations,
+        [int32]$Iterations,
         [Parameter(Mandatory = $false)]
         [ValidateSet('MD5','SHA1','SHA256','SHA384','SHA512')]
-        [String]$Hash,
-        [Switch]$Defaults
+        [string]$Hash,
+        [switch]$Defaults
     )
 
     $Settings = Get-AESKeyConfig
@@ -58,7 +57,7 @@ Function Set-AESKeyConfig {
     }
 
     if (-not($Defaults)) {
-        Switch ($PSBoundParameters.Keys) {
+        switch ($PSBoundParameters.Keys) {
             'SaltString' {
                 try {
                     $Settings.Salt = ConvertTo-Base64 -TextString $SaltString
@@ -73,10 +72,10 @@ Function Set-AESKeyConfig {
                     Throw $_
                 }
             }
-            'Iterations'    { 
+            'Iterations'    {
                 $Settings.Iterations = $Iterations
             }
-            'Hash'          { 
+            'Hash'          {
                 $Settings.Hash = $Hash
             }
         }

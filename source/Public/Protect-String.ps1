@@ -1,13 +1,13 @@
-Function Protect-String {
+function Protect-String {
     <#
-    .Synopsis
+    .SYNOPSIS
     Encrypt a provided string with DPAPI or AES 256-bit encryption and return the cipher text.
-    .Description
+    .DESCRIPTION
     This function will encrypt provided string text with either Microsoft's DPAPI or AES 256-bit encryption. By default it will use DPAPI unless specified.
     Returns a string object of Base64 encoded text.
-    .Parameter InputString
+    .PARAMETER InputString
     This is the string text you wish to protect with encryption. Can  be provided via the pipeline.
-    .Parameter Encryption
+    .PARAMETER Encryption
     Specify either DPAPI or AES encryption. AES is the default if not specified. DPAPI is not recommended on non-Windows systems are there is no encryption for SecureStrings.
     .EXAMPLE
     PS C:\> Protect-String "Secret message"
@@ -20,58 +20,53 @@ Function Protect-String {
     A7B3uXRDkDZkejQVQhwqn2I4KJjsxfqCbc1a+9Jgg620=
 
     This command will encrypt the provided string with AES 256-bit encryption. If no Master Password is found in the current session (set with Set-MasterPassword) then it will prompt for one  to be set.
-    .NOTES
-    Version:        1.3
-    Author:         C. Bodett
-    Creation Date:  12/5/2024
-    Purpose/Change: Changed how output is handled to reduce length
     #>
     [cmdletbinding()]
-    Param (
+    param (
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
-        [String]$InputString,
+        [string]$InputString,
         [Parameter(Mandatory = $false, Position = 1)]
         [ValidateSet("DPAPI","AES")]
-        [String]$Encryption = "AES"
+        [string]$Encryption = "AES"
     )
-    
-    Begin {
+
+    begin {
         Write-Verbose "Encryption Type: $Encryption"
-        If ($Encryption -eq "AES") {
+        if ($Encryption -eq "AES") {
             Write-Verbose "Retrieving Master Password key"
             $SecureAESKey = Get-AESMPVariable
             $ClearTextAESKey = ConvertFrom-SecureStringToPlainText $SecureAESKey
             $AESKey = Convert-HexStringToByteArray -HexString $ClearTextAESKey
         }
-        If (Test-Path Variable:IsWindows) {
+        if (Test-Path Variable:IsWindows) {
             # we know we're not running on Windows since $IsWindows was introduced in v6
-            If (-not($IsWindows) -and ($Encryption.ToUpper() -eq "DPAPI")) {
+            if (-not($IsWindows) -and ($Encryption.ToUpper() -eq "DPAPI")) {
                 throw "Cannot use DPAPI encryption on non-Windows host. Please use AES instead."
             }
         }
     }
 
-    Process {
-        Switch ($Encryption) {
+    process {
+        switch ($Encryption) {
             "DPAPI" {
-                Try {
+                try {
                     Write-Verbose "Converting string text to a SecureString object"
                     $ConvertedString = ConvertTo-SecureString $InputString -AsPlainText -Force | ConvertFrom-SecureString
                     $CipherObject = New-CipherObject -Encryption "DPAPI" -CipherText $ConvertedString
                     $CipherObject.DPAPIIdentity = Get-DPAPIIdentity
                     Write-Verbose "DPAPI Identity: $($CipherObject.DPAPIIdentity)"
                     $CipherObject.ToCompressed()
-                } Catch {
+                } catch {
                     Write-Error $_
                 }
             }
             "AES" {
-                Try {
+                try {
                     Write-Verbose "Encrypting string text with AES 256-bit"
                     $ConvertedString = ConvertTo-AESCipherText -InputString $InputString -Key $AESKey -ErrorAction Stop
                     $CipherObject = New-CipherObject -Encryption "AES" -CipherText $ConvertedString
                     $CipherObject.ToCompressed()
-                } Catch {
+                } catch {
                     Write-Error $_
                 }
             }

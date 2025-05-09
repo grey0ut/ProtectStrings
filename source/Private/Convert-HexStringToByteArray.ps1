@@ -1,21 +1,29 @@
-<#.Synopsis
-Converts a hexidecimal string in to an array of bytes
-.Example
-Any of the following is valid input
+function Convert-HexStringToByteArray {
+    <#
+    .SYNOPSIS
+    converts a hexidecimal string in to an array of bytes
+    .DESCRIPTION
+    converts a hexidecimal string in to an array of bytes. This is a private function that won't be exposed to the session.
+    .PARAMETER HexString
+    The hexadecimal string to convert in to a byte array
 
-0x41,0x42,0x43,0x44
-\x41\x42\x43\x44
-41-42-43-44
-41424344
-#>
-Function Convert-HexStringToByteArray {
+    Any of the following is valid input
+
+    0x41,0x42,0x43,0x44
+    \x41\x42\x43\x44
+    41-42-43-44
+    41424344
+    .EXAMPLE
+    Convert-HexStringToByteArray -HexString 41-42-43-44
+    #>
     [CmdletBinding()]
-    Param (
+    [OutputType([string])]
+    param (
         [Parameter(Mandatory = $true,ValueFromPipeline = $true,Position = 0)]
-        [String]$HexString
+        [string]$HexString
     )
 
-    Process {
+    process {
         $Regex1 = '\b0x\B|\\\x78|-|,|:'
         # convert to lowercase and remove all possible deliminating characters
         $String = $HexString.ToLower() -replace $Regex1,''
@@ -33,5 +41,4 @@ Function Convert-HexStringToByteArray {
                     }
         Write-Output $ByteArray -NoEnumerate
     }
-
 }

@@ -1,24 +1,20 @@
-Function Import-MasterPassword {
+function Import-MasterPassword {
     <#
-    .Synopsis
+    .SYNOPSIS
     Import a previously exported master password from a text file
-    .Description
+    .DESCRIPTION
     Function to import a previously exported master password keyfile and save it in the current session as the master password.
-    .Parameter FilePath
+    .PARAMETER FilePath
     Destination full path (including file name) for the file containing the exported AES Key.
     .EXAMPLE
     PS C:\> Import-MasterPassword -FilePath C:\temp\keyfile.txt
 
 
     This will important the key from keyfile.txt and store it in the current Powershell session as the Master Password.
-    .NOTES
-    Version:        1.0
-    Author:         C. Bodett
-    Creation Date:  3/28/2022
-    Purpose/Change: Initial function development
     #>
     [cmdletbinding()]
-    Param (
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '', Justification = 'Necessary')]
+    param (
         [Parameter(Mandatory = $true, Position = 0)]
         [validatescript({
             if( -not ($_ | test-path) ){
@@ -33,22 +29,21 @@ Function Import-MasterPassword {
         [System.IO.FileInfo]$FilePath
     )
 
-    Begin {
-        Try {
+    begin {
+        try {
             Write-Verbose "Retreiving file content from: $FilePath"
             $EncodedKey = Get-Content -Path $FilePath -ErrorAction Stop
-        } Catch {
+        } catch {
             Write-Error $_
         }
     }
 
-    Process {
-        If ($EncodedKey) {
+    process {
+        if ($EncodedKey) {
             $ClearTextAESKey = ConvertFrom-Base64 -TextString $EncodedKey
             Write-Verbose "Storing AES Key to current session"
             $SecureAESKey = ConvertTo-SecureString -String $ClearTextAESKey -AsPlainText -Force
             Set-AESMPVariable -MPKey $SecureAESKey
         }
     }
-
 }
