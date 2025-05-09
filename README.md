@@ -112,3 +112,7 @@ bchester AUD3RQCSCQHWE13tVi2hQLs2jCkwmVevERYT7/cduurY=   Bill Chester    Facilit
 ```
 
 Then while the CSV was loaded in to a variable (memory) I could loop through and use Unprotect-String to view the recovered passwords.  When I was done, I could use Protect-String again with AES encryption and the same Master Password, and then Export-CSV to save my work to file again.  All the while knowing that the sensitive data was encrypted within the file.  Are there other solutions out there? Probably, but this one was more fun and I got to make something.
+
+## Made With Sampler
+This project was made using [Sampler Module](https://github.com/gaelcolas/Sampler)
+See their [video presentation](https://youtu.be/tAUCWo88io4?si=jq0f7omwll1PtUsN) from the PowerShell summit for a great demonstration.
