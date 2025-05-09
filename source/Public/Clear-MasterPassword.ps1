@@ -14,5 +14,5 @@ function Clear-MasterPassword {
     )
 
     Write-Verbose "Removing master password from current session"
-    Clear-AESMPVariable
+    Remove-Variable -Name "AESMP" -Force -Scope Global -ErrorAction SilentlyContinue
 }

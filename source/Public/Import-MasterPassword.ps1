@@ -40,10 +40,10 @@ function Import-MasterPassword {
 
     process {
         if ($EncodedKey) {
-            $ClearTextAESKey = ConvertFrom-Base64 -TextString $EncodedKey
+            $ClearTextAESKey = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($EncodedKey))
             Write-Verbose "Storing AES Key to current session"
             $SecureAESKey = ConvertTo-SecureString -String $ClearTextAESKey -AsPlainText -Force
-            Set-AESMPVariable -MPKey $SecureAESKey
+            New-Variable -Name "AESMP" -Value $SecureAESKey -Option AllScope -Scope Global -Force
         }
     }
 }

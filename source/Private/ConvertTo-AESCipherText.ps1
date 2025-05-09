@@ -21,13 +21,15 @@ function ConvertTo-AESCipherText {
     )
 
     $InitializationVector = [System.Byte[]]::new(16)
-    Get-RandomByte -Bytes $InitializationVector
-    $AESCipher = Initialize-AESCipher -Key $Key
-    $AESCipher.IV = $InitializationVector
-    $ClearTextBytes = ConvertTo-Byte -InputString $InputString -Encoding UTF8
-    $Encryptor =  $AESCipher.CreateEncryptor()
+    $RNG = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+    $RNG.GetBytes($InitializationVector)
+    $AESProvider = [System.Security.Cryptography.AesCryptoServiceProvider]::Create()
+    $AESProvider.Key = $Key
+    $AESProvider.IV = $InitializationVector
+    $ClearTextBytes = [System.Text.Encoding]::UTF8.GetBytes($InputString)
+    $Encryptor =  $AESProvider.CreateEncryptor()
     $EncryptedBytes = $Encryptor.TransformFinalBlock($ClearTextBytes, 0, $ClearTextBytes.Length)
-    [byte[]]$FullData = $AESCipher.IV + $EncryptedBytes
+    [byte[]]$FullData = $AESProvider.IV + $EncryptedBytes
     $ConvertedString = [System.Convert]::ToBase64String($FullData)
     $DebugInfo = @"
 `r`n  Input String Length     : $($InputString.Length)
@@ -36,6 +38,6 @@ function ConvertTo-AESCipherText {
   Output Encoding         : Base64
 "@
     Write-Debug $DebugInfo
-    $AESCipher.Dispose()
+    $AESProvider.Dispose()
     $ConvertedString
 }

@@ -22,20 +22,21 @@ function ConvertFrom-AESCipherText {
 
     process {
         Write-Verbose "Creating new AES Cipher object with supplied key"
-        $AESCipher = Initialize-AESCipher -Key $Key
+        $AESProvider = [System.Security.Cryptography.AesCryptoServiceProvider]::Create()
+        $AESProvider.Key = $Key
         Write-Verbose "Convert input text from Base64"
         $EncryptedBytes = [System.Convert]::FromBase64String($InputCipherText)
         Write-Verbose "Using the first 16 bytes as the initialization vector"
-        $AESCipher.IV = $EncryptedBytes[0..15]
+        $AESProvider.IV = $EncryptedBytes[0..15]
         Write-Verbose "Decrypting AES cipher text"
-        $Decryptor = $AESCipher.CreateDecryptor()
+        $Decryptor = $AESProvider.CreateDecryptor()
         $UnencryptedBytes = $Decryptor.TransformFinalBlock($EncryptedBytes, 16, $EncryptedBytes.Length - 16)
-        $ConvertedString = ConvertFrom-Byte -InputBytes $UnencryptedBytes -Encoding UTF8
+        $ConvertedString = [System.Text.Encoding]::UTF8.GetString($UnencryptedBytes)
         $ConvertedString
     }
 
     end {
         Write-Verbose "Disposing of AES Cipher object"
-        $AESCipher.Dispose()
+        $AESProvider.Dispose()
     }
 }

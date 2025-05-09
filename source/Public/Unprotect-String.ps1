@@ -33,6 +33,7 @@ function UnProtect-String {
     Clearing the master password from the sessino, providing the previously protected text to Unprotect-String will prompt for a master password and then decrypt the text and return the original string text.
     #>
     [cmdletbinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars','',Justification='Required for QoL')]
     param (
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         [string]$InputString
@@ -48,7 +49,7 @@ function UnProtect-String {
         }
         Write-Verbose "Encryption type: $($CipherObject.Encryption)"
         if ($CipherObject.Encryption -eq "AES") {
-            $SecureAESKey = Get-AESMPVariable
+            $SecureAESKey = $Global:AESMP
             $ClearTextAESKey = ConvertFrom-SecureStringToPlainText $SecureAESKey
             $AESKey = Convert-HexStringToByteArray -HexString $ClearTextAESKey
         }
@@ -72,7 +73,7 @@ function UnProtect-String {
                     $ConvertedString
                 } catch {
                     Write-Warning "Failed to decrypt. Incorrect AES key. Check your Master Password."
-                    Clear-AESMPVariable
+                    Clear-MasterPassword
                 }
             }
         }

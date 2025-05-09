@@ -10,14 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - changed Remove-MasterPassword to Clear-MasterPassword
-- changed ConvertFrom-Bytes to singular
-- changed ConvertTo-Bytes to singular
+- changed RNG from RNGCryptoServiceProvider to RandomNumberGenrator
 
 ### Fixed
 
 - satisfied PSScriptAnalyzer tests
 
-### Security
+### Removed
 
-- In case of vulnerabilities.
-
+- removed several private functions that ultimately are unnecessary and require additional pester tests
+- Private function Clear-AESMPVariable
+- Private function ConvertFrom-Byte
+- Private function ConvertTo-Byte
+- Private function ConvertTo-Base64
+- Private function ConvertFrom-Base64
+- Private function Get-AESMPVariable
+- Private function Get-RandomByte
+- Private function New-AESCipher
+- Private function Set-AESMPVariable

@@ -33,7 +33,7 @@ function Export-MasterPassword {
         Write-Verbose "Stored AES key found"
         $ClearTextAESKey = ConvertFrom-SecureStringToPlainText $SecureAESKey
         Write-Verbose "Converting to Base64 before export"
-        $EncodedKey = ConvertTo-Base64 -TextString $ClearTextAESKey
+        $EncodedKey = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($ClearTextAESKey))
         Write-Verbose "Saving to $Filepath with Encoded key:"
         Out-File -FilePath $FilePath -InputObject $EncodedKey -Force
     } else {

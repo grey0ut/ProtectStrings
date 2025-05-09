@@ -24,7 +24,7 @@ function ConvertTo-CipherObject {
             $CipherText = $B64String.SubString(1,$B64String.IndexOf('?')-1)
             $DPAPIIdB64 = $B64String.SubString($B64String.IndexOf('?')+1)
             $DPAPIIdBytes = [System.Convert]::FromBase64String($DPAPIIdB64)
-            $DPAPIIdentity = ConvertFrom-Byte -InputBytes $DPAPIIdBytes -Encoding UTF8
+            $DPAPIIdentity = [System.Text.Encoding]::UTF8.GetString($DPAPIIdBytes)
         }
         default {
             Write-Verbose "Does not appear to be ProtectStrings module ciphertext"

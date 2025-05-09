@@ -12,15 +12,20 @@ function Get-MasterPassword {
 
     #>
     [cmdletbinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars','',Justification='Required for QoL')]
     [OutputType([System.Security.SecureString], [bool])]
     param (
         [Switch]$Boolean
     )
-    Write-Verbose "Checking for stored AES key"
 
+    Write-Verbose "Checking for stored AES key"
     if ($Boolean) {
-        Get-AESMPVariable -Boolean
+        if ($Global:AESMP) {
+            return $true
+        } else {
+            return $false
+        }
     } else {
-        Get-AESMPVariable
+        $Global:AESMP
     }
 }

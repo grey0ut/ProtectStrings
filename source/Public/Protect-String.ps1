@@ -22,6 +22,7 @@ function Protect-String {
     This command will encrypt the provided string with AES 256-bit encryption. If no Master Password is found in the current session (set with Set-MasterPassword) then it will prompt for one  to be set.
     #>
     [cmdletbinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars','',Justification='Required for QoL')]
     param (
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         [string]$InputString,
@@ -34,7 +35,7 @@ function Protect-String {
         Write-Verbose "Encryption Type: $Encryption"
         if ($Encryption -eq "AES") {
             Write-Verbose "Retrieving Master Password key"
-            $SecureAESKey = Get-AESMPVariable
+            $SecureAESKey = $Global:AESMP
             $ClearTextAESKey = ConvertFrom-SecureStringToPlainText $SecureAESKey
             $AESKey = Convert-HexStringToByteArray -HexString $ClearTextAESKey
         }
@@ -53,7 +54,7 @@ function Protect-String {
                     Write-Verbose "Converting string text to a SecureString object"
                     $ConvertedString = ConvertTo-SecureString $InputString -AsPlainText -Force | ConvertFrom-SecureString
                     $CipherObject = New-CipherObject -Encryption "DPAPI" -CipherText $ConvertedString
-                    $CipherObject.DPAPIIdentity = Get-DPAPIIdentity
+                    $CipherObject.DPAPIIdentity = '{0}\{1}' -f $ENV:COMPUTERNAME,$ENV:USERNAME
                     Write-Verbose "DPAPI Identity: $($CipherObject.DPAPIIdentity)"
                     $CipherObject.ToCompressed()
                 } catch {
