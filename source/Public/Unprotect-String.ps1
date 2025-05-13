@@ -39,6 +39,10 @@ function UnProtect-String {
         [string]$InputString
     )
 
+    begin {
+        Add-Type -AssemblyName System.Security
+    }
+
     process {
         Write-Verbose "Converting supplied text to a Cipher Object for ProtectStrings"
         $CipherObject = try {

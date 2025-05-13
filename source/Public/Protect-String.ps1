@@ -35,6 +35,13 @@ function Protect-String {
         Write-Verbose "Encryption Type: $Encryption"
         if ($Encryption -eq "AES") {
             Write-Verbose "Retrieving Master Password key"
+            if (Get-MasterPassword -Boolean) {
+                $SecureAESKey = Get-MasterPassword
+            } else {
+                Write-Verbose "No Master Password key found"
+                Set-MasterPassword
+                $SecureAESKey = Get-MasterPassword
+            }
             $SecureAESKey = $Global:AESMP
             $ClearTextAESKey = ConvertFrom-SecureStringToPlainText $SecureAESKey
             $AESKey = Convert-HexStringToByteArray -HexString $ClearTextAESKey
@@ -45,6 +52,7 @@ function Protect-String {
                 throw "Cannot use DPAPI encryption on non-Windows host. Please use AES instead."
             }
         }
+        Add-Type -AssemblyName System.Security
     }
 
     process {
