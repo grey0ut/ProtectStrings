@@ -5,27 +5,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-### Changed
-
-- changed Remove-MasterPassword to Clear-MasterPassword
-- changed RNG from RNGCryptoServiceProvider to RandomNumberGenrator
-- changed from Convert*-SecureString cmdlets to the .NET System.Security.Cryptography.ProtectedData class
-
 ### Fixed
 
-- satisfied PSScriptAnalyzer tests
-
-### Removed
-
-- removed several private functions that ultimately are unnecessary and require additional pester tests
-- Private function Clear-AESMPVariable
-- Private function ConvertFrom-Byte
-- Private function ConvertTo-Byte
-- Private function ConvertTo-Base64
-- Private function ConvertFrom-Base64
-- Private function Get-AESMPVariable
-- Private function Get-RandomByte
-- Private function New-AESCipher
-- Private function Set-AESMPVariable
+- DPAPI required manually adding System.Security assembly type on v5.1
+- AES encryption wasn't automatically asking for password when no password was present
