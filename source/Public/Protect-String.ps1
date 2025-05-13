@@ -64,7 +64,7 @@ function Protect-String {
                     $DPAPIBytes = [System.Security.Cryptography.ProtectedData]::Protect($StringBytes, $null, [System.Security.Cryptography.DataProtectionScope]::CurrentUser)
                     $ConvertedString = [System.Convert]::ToBase64String($DPAPIBytes)
                     $CipherObject = New-CipherObject -Encryption "DPAPI" -CipherText $ConvertedString
-                    $CipherObject.DPAPIIdentity = '{0}\{1}' -f $ENV:COMPUTERNAME,$ENV:USERNAME
+                    $CipherObject.DPAPIIdentity = '{0}\{1}' -f $ENV:COMPUTERNAME,[System.Environment]::UserName
                     Write-Verbose "DPAPI Identity: $($CipherObject.DPAPIIdentity)"
                     $CipherObject.ToCompressed()
                 } catch {
