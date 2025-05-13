@@ -7,5 +7,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- DPAPI required manually adding System.Security assembly type on v5.1
-- AES encryption wasn't automatically asking for password when no password was present
+- Issue where DPAPI username is reported as SYSTEM when using Windows Terminal as administrator
