@@ -53,6 +53,9 @@ function UnProtect-String {
         }
         Write-Verbose "Encryption type: $($CipherObject.Encryption)"
         if ($CipherObject.Encryption -eq "AES") {
+            if (-not($Global:AESMP)) {
+                Set-MasterPassword
+            }
             $SecureAESKey = $Global:AESMP
             $ClearTextAESKey = ConvertFrom-SecureStringToPlainText $SecureAESKey
             $AESKey = Convert-HexStringToByteArray -HexString $ClearTextAESKey

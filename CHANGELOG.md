@@ -7,4 +7,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Issue where DPAPI username is reported as SYSTEM when using Windows Terminal as administrator
+- Issue with Unprotect-String not prompting for Master Password if it hadn't been set in this session yet.
